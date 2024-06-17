@@ -48,10 +48,10 @@ def get_answer(
 
     encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
     choices = []
-    total_model_to_outputs_dict = []
+    #total_model_to_outputs_dict = []
     for i in range(num_choices):
         turns = []
-        current_model_to_outputs_dicts = []
+        #current_model_to_outputs_dicts = []
         for j in range(len(question["turns"])):
             conv.append({"role": "user", "content": question["turns"][j]["content"]})
             if api_type == "anthropic":
@@ -95,10 +95,10 @@ def get_answer(
                                                 api_dict=api_dict)
             conv.append({"role": "assistant", "content": output})
             turns.append({"content": output, "token_len": len(encoding.encode(output, disallowed_special=()))})
-            current_model_to_outputs_dicts.append(model_to_outputs_dict)
+            #current_model_to_outputs_dicts.append(model_to_outputs_dict)
 
         choices.append({"index": i, "turns": turns})
-        total_model_to_outputs_dict.append(current_model_to_outputs_dicts)
+        #total_model_to_outputs_dict.append(current_model_to_outputs_dicts)
 
     # Dump answers
     ans = {
@@ -107,7 +107,7 @@ def get_answer(
         "model_id": model,
         "choices": choices,
         "tstamp": time.time(),
-        "model_to_outputs_dict": total_model_to_outputs_dict
+        #"model_to_outputs_dict": total_model_to_outputs_dict
     }
 
     os.makedirs(os.path.dirname(answer_file), exist_ok=True)
