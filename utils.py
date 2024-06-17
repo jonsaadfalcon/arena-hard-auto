@@ -321,7 +321,6 @@ def chat_completion_cohere(model, messages, temperature, max_tokens):
     
     return output
 
-
 def chat_completion_together_ai(model, models, candidate_count, messages, temperature, max_tokens):
 
     client = Together(api_key=os.environ.get("TOGETHER_API_KEY"))
@@ -344,36 +343,41 @@ def chat_completion_together_ai(model, models, candidate_count, messages, temper
                 break
         
         return output
-    else:
-        model_to_outputs_dict = {}
-        total_outputs = []
-        for model in models:
 
-            current_outputs = []
-            for _ in range(candidate_count):
-                output = API_ERROR_OUTPUT
-                for _ in range(API_MAX_RETRY):
-                    try:
-                        response = client.chat.completions.create(
-                            model=model,
-                            messages=messages,
-                            temperature=temperature,
-                            max_tokens=max_tokens,
-                        )
-                        output = response.choices[0].message.content
-                        break
-                    except Exception as e:
-                        print(type(e), e)
-                        break
-                current_outputs.append(output)
+def chat_completion_together_ai_v2(model, models, candidate_count, messages, temperature, max_tokens):
 
-            model_to_outputs_dict[model] = current_outputs
-            total_outputs.extend(current_outputs)
+    client = Together(api_key=os.environ.get("TOGETHER_API_KEY"))
+    assert len(messages) > 0
+    
+    model_to_outputs_dict = {}
+    total_outputs = []
+    for model in models:
+
+        current_outputs = []
+        for _ in range(candidate_count):
+            output = API_ERROR_OUTPUT
+            for _ in range(API_MAX_RETRY):
+                try:
+                    response = client.chat.completions.create(
+                        model=model,
+                        messages=messages,
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                    )
+                    output = response.choices[0].message.content
+                    break
+                except Exception as e:
+                    print(type(e), e)
+                    break
+            current_outputs.append(output)
+
+        model_to_outputs_dict[model] = current_outputs
+        total_outputs.extend(current_outputs)
         
-        random_sampled_output = random.sample(total_outputs, 1)[0]
-        print("Prompt:", messages)
-        print("Output:", random_sampled_output)
-        return random_sampled_output, model_to_outputs_dict
+    random_sampled_output = random.sample(total_outputs, 1)[0]
+    print("Prompt:", messages)
+    print("Output:", random_sampled_output)
+    return random_sampled_output, model_to_outputs_dict
         
 
 def reorg_answer_file(answer_file):

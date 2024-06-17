@@ -81,12 +81,12 @@ def get_answer(
                                                 temperature=temperature,
                                                 max_tokens=max_tokens)
             elif api_type == "together_ai":
-                output, model_to_outputs_dict = chat_completion_together_ai(model=endpoint_info["model_name"],
-                                                                            models=endpoint_info["models"],
-                                                                            candidate_count=endpoint_info["candidate_count"],
-                                                                            messages=conv,
-                                                                            temperature=endpoint_info["temperature"],
-                                                                            max_tokens=max_tokens)
+                output = chat_completion_together_ai(model=endpoint_info["model_name"],
+                                                     models=endpoint_info["models"],
+                                                     candidate_count=endpoint_info["candidate_count"],
+                                                     messages=conv,
+                                                     temperature=endpoint_info["temperature"],
+                                                     max_tokens=max_tokens)
             else:
                 output = chat_completion_openai(model=endpoint_info["model_name"], 
                                                 messages=conv, 
