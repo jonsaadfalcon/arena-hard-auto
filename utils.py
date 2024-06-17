@@ -4,13 +4,14 @@ import time
 import yaml
 import random
 import requests
+from together import Together
 
 from typing import Optional
 from glob import glob
 
 # API setting constants
-API_MAX_RETRY = 16
-API_RETRY_SLEEP = 10
+API_MAX_RETRY = 3 #16
+API_RETRY_SLEEP = 5 #10
 API_ERROR_OUTPUT = "$ERROR$"
 
 
@@ -320,6 +321,60 @@ def chat_completion_cohere(model, messages, temperature, max_tokens):
     
     return output
 
+
+def chat_completion_together_ai(model, models, candidate_count, messages, temperature, max_tokens):
+
+    client = Together(api_key=os.environ.get("TOGETHER_API_KEY"))
+    assert len(messages) > 0
+    
+    if len(models) == 1:
+        output = API_ERROR_OUTPUT
+        for _ in range(API_MAX_RETRY):
+            try:
+                response = client.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                )
+                output = response.choices[0].message.content
+                break
+            except Exception as e:
+                print(type(e), e)
+                break
+        
+        return output
+    else:
+        model_to_outputs_dict = {}
+        total_outputs = []
+        for model in models:
+
+            current_outputs = []
+            for _ in range(candidate_count):
+                output = API_ERROR_OUTPUT
+                for _ in range(API_MAX_RETRY):
+                    try:
+                        response = client.chat.completions.create(
+                            model=model,
+                            messages=messages,
+                            temperature=temperature,
+                            max_tokens=max_tokens,
+                        )
+                        output = response.choices[0].message.content
+                        break
+                    except Exception as e:
+                        print(type(e), e)
+                        break
+                current_outputs.append(output)
+
+            model_to_outputs_dict[model] = current_outputs
+            total_outputs.extend(current_outputs)
+        
+        random_sampled_output = random.sample(total_outputs, 1)[0]
+        print("Prompt:", messages)
+        print("Output:", random_sampled_output)
+        return random_sampled_output, model_to_outputs_dict
+        
 
 def reorg_answer_file(answer_file):
     """Sort by question id and de-duplication"""

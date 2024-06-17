@@ -24,6 +24,7 @@ from utils import (
     chat_completion_mistral,
     http_completion_gemini,
     chat_completion_cohere,
+    chat_completion_together_ai,
     reorg_answer_file,
     OPENAI_MODEL_LIST,
     temperature_config,
@@ -47,8 +48,10 @@ def get_answer(
 
     encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
     choices = []
+    total_model_to_outputs_dict = []
     for i in range(num_choices):
         turns = []
+        current_model_to_outputs_dicts = []
         for j in range(len(question["turns"])):
             conv.append({"role": "user", "content": question["turns"][j]["content"]})
             if api_type == "anthropic":
@@ -77,6 +80,13 @@ def get_answer(
                                                 messages=conv,
                                                 temperature=temperature,
                                                 max_tokens=max_tokens)
+            elif api_type == "together_ai":
+                output, model_to_outputs_dict = chat_completion_together_ai(model=endpoint_info["model_name"],
+                                                                            models=endpoint_info["models"],
+                                                                            candidate_count=endpoint_info["candidate_count"],
+                                                                            messages=conv,
+                                                                            temperature=endpoint_info["temperature"],
+                                                                            max_tokens=max_tokens)
             else:
                 output = chat_completion_openai(model=endpoint_info["model_name"], 
                                                 messages=conv, 
@@ -84,9 +94,11 @@ def get_answer(
                                                 max_tokens=max_tokens, 
                                                 api_dict=api_dict)
             conv.append({"role": "assistant", "content": output})
-
             turns.append({"content": output, "token_len": len(encoding.encode(output, disallowed_special=()))})
+            current_model_to_outputs_dicts.append(model_to_outputs_dict)
+
         choices.append({"index": i, "turns": turns})
+        total_model_to_outputs_dict.append(current_model_to_outputs_dicts)
 
     # Dump answers
     ans = {
@@ -95,6 +107,7 @@ def get_answer(
         "model_id": model,
         "choices": choices,
         "tstamp": time.time(),
+        "model_to_outputs_dict": total_model_to_outputs_dict
     }
 
     os.makedirs(os.path.dirname(answer_file), exist_ok=True)
