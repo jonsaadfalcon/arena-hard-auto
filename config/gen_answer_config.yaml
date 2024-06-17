@@ -15,6 +15,6 @@ model_list:
   #- Qwen/Qwen1.5-110B-Chat
   #- microsoft/WizardLM-2-8x22B
   #- mistralai/Mixtral-8x22B-Instruct-v0.1
-  - meta-llama/Llama-3-70b-chat-hf
-  #- databricks/dbrx-instruct
+  #- meta-llama/Llama-3-70b-chat-hf
+  - databricks/dbrx-instruct
 
