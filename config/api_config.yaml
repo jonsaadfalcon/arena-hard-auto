@@ -30,7 +30,7 @@ Qwen/Qwen1.5-72B-Chat:
     model_name: "Qwen/Qwen1.5-72B-Chat"
     #models: ["Qwen/Qwen1.5-72B-Chat", "Qwen/Qwen1.5-110B-Chat", "microsoft/WizardLM-2-8x22B", "mistralai/Mixtral-8x22B-Instruct-v0.1", "meta-llama/Llama-3-70b-chat-hf", "databricks/dbrx-instruct"]
     models: ["Qwen/Qwen1.5-72B-Chat"]
-    candidate_count: 10
+    candidate_count: 1
     temperature: 0.7
     endpoints: null
     api_type: together_ai
