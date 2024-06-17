@@ -39,7 +39,7 @@ Qwen/Qwen1.5-72B-Chat:
 Qwen/Qwen1.5-110B-Chat:
     model_name: "Qwen/Qwen1.5-110B-Chat"
     models: ["Qwen/Qwen1.5-110B-Chat"]
-    candidate_count: 10
+    candidate_count: 1
     temperature: 0.7
     endpoints: null
     api_type: together_ai
@@ -48,7 +48,7 @@ Qwen/Qwen1.5-110B-Chat:
 microsoft/WizardLM-2-8x22B:
     model_name: "microsoft/WizardLM-2-8x22B"
     models: ["microsoft/WizardLM-2-8x22B"]
-    candidate_count: 10
+    candidate_count: 1
     temperature: 0.7
     endpoints: null
     api_type: together_ai
@@ -57,7 +57,7 @@ microsoft/WizardLM-2-8x22B:
 mistralai/Mixtral-8x22B-Instruct-v0.1:
     model_name: "mistralai/Mixtral-8x22B-Instruct-v0.1"
     models: ["mistralai/Mixtral-8x22B-Instruct-v0.1"]
-    candidate_count: 10
+    candidate_count: 1
     temperature: 0.7
     endpoints: null
     api_type: together_ai
@@ -66,7 +66,7 @@ mistralai/Mixtral-8x22B-Instruct-v0.1:
 meta-llama/Llama-3-70b-chat-hf:
     model_name: "meta-llama/Llama-3-70b-chat-hf"
     models: ["meta-llama/Llama-3-70b-chat-hf"]
-    candidate_count: 10
+    candidate_count: 1
     temperature: 0.7
     endpoints: null
     api_type: together_ai
@@ -75,7 +75,7 @@ meta-llama/Llama-3-70b-chat-hf:
 databricks/dbrx-instruct:
     model_name: "databricks/dbrx-instruct"
     models: ["databricks/dbrx-instruct"]
-    candidate_count: 10
+    candidate_count: 1
     temperature: 0.7
     endpoints: null
     api_type: together_ai
