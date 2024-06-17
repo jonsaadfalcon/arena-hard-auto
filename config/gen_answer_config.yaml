@@ -4,7 +4,7 @@ bench_name: arena-hard-v0.1
 
 temperature: 0.0
 max_tokens: 4096
-num_choices: 1
+num_choices: 10
 
 # a list of model to generate answers
 model_list:
