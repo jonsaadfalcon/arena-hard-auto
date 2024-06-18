@@ -3,7 +3,7 @@ name: config of answer generation for arena-hard-v0.1
 bench_name: arena-hard-v0.1
 
 temperature: 0.0
-max_tokens: 512
+max_tokens: 4096 #4096
 num_choices: 10
 
 # a list of model to generate answers
@@ -13,8 +13,8 @@ model_list:
   #"Qwen/Qwen1.5-72B-Chat", "Qwen/Qwen1.5-110B-Chat", "microsoft/WizardLM-2-8x22B", "mistralai/Mixtral-8x22B-Instruct-v0.1", "meta-llama/Llama-3-70b-chat-hf", "databricks/dbrx-instruct"
   #- Qwen/Qwen1.5-72B-Chat
   #- Qwen/Qwen1.5-110B-Chat
-  #- microsoft/WizardLM-2-8x22B
+  - microsoft/WizardLM-2-8x22B
   #- mistralai/Mixtral-8x22B-Instruct-v0.1
-  - meta-llama/Llama-3-70b-chat-hf
+  #- meta-llama/Llama-3-70b-chat-hf
   #- databricks/dbrx-instruct
 
