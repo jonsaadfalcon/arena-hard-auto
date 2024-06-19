@@ -81,7 +81,7 @@ if not perform_ensembling:
         print(f"Generating candidates for model: {model_name}")
         
         model_id = model_name.split("/")[1]
-        saved_jsonl_path = f"data/arena-hard-v0.1/model_answer/{model_id}.jsonl"
+        saved_jsonl_path = f"data/arena-hard-v0.1/model_answer/{model_name}.jsonl"
         if not os.path.exists(saved_jsonl_path):
             candidate_generation_command = "python gen_answer.py"
 
