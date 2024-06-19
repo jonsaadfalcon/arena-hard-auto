@@ -187,6 +187,8 @@ if __name__ == "__main__":
                     count += 1
                     continue
 
+                breakpoint()
+
                 kwargs["answer"] = model_answers[model][question_id]
                 if ref_answers:
                     kwargs["reference"] = [ref_answer[question_id] for ref_answer in ref_answers]
