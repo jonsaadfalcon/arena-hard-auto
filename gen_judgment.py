@@ -197,10 +197,7 @@ if __name__ == "__main__":
                     continue
 
                 #breakpoint()
-                if model in model_to_full_name:
-                    kwargs["answer"] = model_answers[model_to_full_name[model]][question_id]
-                else:
-                    kwargs["answer"] = model_answers[model][question_id]
+                kwargs["answer"] = model_answers[model][question_id]
 
                 if ref_answers:
                     kwargs["reference"] = [ref_answer[question_id] for ref_answer in ref_answers]
