@@ -46,6 +46,8 @@ def get_answer(
     elif model in OPENAI_MODEL_LIST:
         conv.append({"role": "system", "content": "You are a helpful assistant."})
 
+    breakpoint()
+
     encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
     choices = []
     #total_model_to_outputs_dict = []
@@ -107,6 +109,7 @@ def get_answer(
         "model_id": model,
         "choices": choices,
         "tstamp": time.time(),
+        "question": question["turns"][0]["content"],
         #"model_to_outputs_dict": total_model_to_outputs_dict
     }
 
