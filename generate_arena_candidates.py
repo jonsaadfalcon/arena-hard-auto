@@ -76,40 +76,30 @@ ranker_config = {
 
 if not perform_ensembling:
     
-    for model_name in models:
+    print(f"Generating candidates for models: {models}")
+    
+    model_name = models[0]
+    model_id = model_name.split("/")[1]
+    saved_jsonl_path = f"data/arena-hard-v0.1/model_answer/{model_name}.jsonl"
+    if not os.path.exists(saved_jsonl_path):
+        candidate_generation_command = "python gen_answer.py"
 
-        print(f"Generating candidates for model: {model_name}")
-        
-        model_id = model_name.split("/")[1]
-        saved_jsonl_path = f"data/arena-hard-v0.1/model_answer/{model_name}.jsonl"
-        if not os.path.exists(saved_jsonl_path):
-            candidate_generation_command = "python gen_answer.py"
-
-            print("Generation Command: ", candidate_generation_command)
-            print("Generating candidates...")
-            #generation_result = subprocess.run(candidate_generation_command, shell=True, capture_output=True, text=True)
-            with subprocess.Popen(candidate_generation_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
-                for line in process.stdout:
-                    print(line, end='')  # Print the output in real-time
-
-        else:
-            print(f"Model {model_name} already has candidates generated. Already saved to: {saved_jsonl_path}")
-
-        ##########################################
-
-        judgement_command = "python gen_judgment.py"
-        print("Generating judgements...")
-        #judgement_result = subprocess.run(judgement_command, shell=True, capture_output=True, text=True)
-        #breakpoint()
-        with subprocess.Popen(judgement_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
+        print("Generation Command: ", candidate_generation_command)
+        print("Generating candidates...")
+        with subprocess.Popen(candidate_generation_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
             for line in process.stdout:
                 print(line, end='')  # Print the output in real-time
 
-        #print("------------------------------------------------")
-        #print(f"Judgement Results for {model_name}:")
-        #for line in judgement_result.stdout.split("\n"):
-        #    print(line)
-        #print("------------------------------------------------")
+    else:
+        print(f"Model {model_name} already has candidates generated. Already saved to: {saved_jsonl_path}")
+
+    ##########################################
+
+    judgement_command = "python gen_judgment.py"
+    print("Generating judgements...")
+    with subprocess.Popen(judgement_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
+        for line in process.stdout:
+            print(line, end='')  # Print the output in real-time
 
     ##########################################
 
