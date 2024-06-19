@@ -170,6 +170,15 @@ if __name__ == "__main__":
 
     endpoint_info = endpoint_list[configs["judge_model"]]
 
+    model_to_full_name = {
+        "Qwen1.5-72B-Chat": "Qwen/Qwen1.5-72B-Chat",
+        "Qwen1.5-110B-Chat": "Qwen/Qwen1.5-110B-Chat",
+        "WizardLM-2-8x22B": "microsoft/WizardLM-2-8x22B",
+        "Mixtral-8x22B-Instruct-v0.1": "mistralai/Mixtral-8x22B-Instruct-v0.1",
+        "Llama-3-70b-chat-hf": "meta-llama/Llama-3-70b-chat-hf",
+        "dbrx-instruct": "databricks/dbrx-instruct",
+    }
+
     with concurrent.futures.ThreadPoolExecutor(max_workers=endpoint_info["parallel"]) as executor:
         futures = []
         for model in models:
@@ -187,9 +196,12 @@ if __name__ == "__main__":
                     count += 1
                     continue
 
-                breakpoint()
+                #breakpoint()
+                if model in model_to_full_name:
+                    kwargs["answer"] = model_answers[model_to_full_name[model]][question_id]
+                else:
+                    kwargs["answer"] = model_answers[model][question_id]
 
-                kwargs["answer"] = model_answers[model][question_id]
                 if ref_answers:
                     kwargs["reference"] = [ref_answer[question_id] for ref_answer in ref_answers]
                     assert len(kwargs["reference"]) == len(configs["ref_model"])
