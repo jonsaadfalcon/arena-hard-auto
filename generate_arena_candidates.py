@@ -111,14 +111,14 @@ if not perform_ensembling:
         #    print(line)
         #print("------------------------------------------------")
 
-        ##########################################
+    ##########################################
 
-        show_results_command = "python show_result.py"
-        print("Showing results...")
-        show_results_result = subprocess.run(show_results_command, shell=True, capture_output=True, text=True)
+    show_results_command = "python show_result.py"
+    print("Showing results...")
+    show_results_result = subprocess.run(show_results_command, shell=True, capture_output=True, text=True)
 
-        print("------------------------------------------------")
-        print(f"MTBench Results for {model_name}:")
-        for line in show_results_result.stdout.split("\n"):
-            print(line)
-        print("------------------------------------------------")
+    print("------------------------------------------------")
+    print(f"Arena-Hard-Auto Results for {model_name}:")
+    for line in show_results_result.stdout.split("\n"):
+        print(line)
+    print("------------------------------------------------")
