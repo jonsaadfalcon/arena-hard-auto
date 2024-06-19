@@ -163,6 +163,8 @@ if __name__ == "__main__":
             f"{model}.jsonl",
         )
 
+    breakpoint()
+
     for output_file in output_files.values():
         os.makedirs(os.path.dirname(output_file), exist_ok=True)
 
@@ -186,8 +188,6 @@ if __name__ == "__main__":
                 if model in existing_judgments and question_id in existing_judgments[model]:
                     count += 1
                     continue
-
-                breakpoint()
 
                 kwargs["answer"] = model_answers[model][question_id]
                 if ref_answers:
