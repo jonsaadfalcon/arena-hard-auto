@@ -72,6 +72,10 @@ ranker_config = {
     "device": "cuda:0"
 }
 
+# Check if dataset already exists
+ensemble_model_id = "ensemble_v2"
+final_dataset_path = f"data/arena-hard-v0.1/model_answer/{ensemble_model_id}.jsonl"
+
 #################################################
 
 if not perform_ensembling:
@@ -115,12 +119,7 @@ if not perform_ensembling:
 
 else:
 
-    print("Performing ensembling for MT Bench...")
-
-    # Check if dataset already exists
-    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    ensemble_model_id = f"ensemble_{timestamp}"
-    final_dataset_path = f"data/arena-hard-v0.1/model_answer/{ensemble_model_id}.jsonl"
+    print("Performing ensembling for Arena-Hard-Auto...")
 
     #################################################
 
@@ -136,6 +135,24 @@ else:
 
     #################################################
 
+    # Gather candidates
+
+    instructions = [instruction[0] for instruction in total_datasets[0]["question"].tolist()]
+    ensemble_candidates = []
+
+    for row_idx in range(len(total_datasets[0])):
+        candidates = []
+        question_id = total_datasets[0].iloc[row_idx]["question_id"]
+        for dataset in total_datasets:
+            assert dataset.iloc[row_idx]["question_id"] == question_id
+            current_choices = dataset["choices"].iloc[row_idx]
+            assert len(current_choices["turns"]) == 1
+            current_candidates = [choice["turns"][0]["content"] for choice in current_choices]
+            candidates.append(current_candidates)
+        ensemble_candidates.append(candidates)
+
+    #################################################
+
     # Perform ranking over candidates
     import llm_blender
     blender = llm_blender.Blender()
@@ -146,78 +163,45 @@ else:
     breakpoint()
 
     # Score first turn candidates
-    assert len(first_turn_instructions) == len(first_turn_candidates)
+    assert len(instructions) == len(ensemble_candidates)
     print("Performing Ensemble Candidate Ranking for First Turn Candidates with PairRM Ranker...")
-    scores = blender.rank(first_turn_instructions, first_turn_candidates, return_scores=True, batch_size=ranker_config['ranker_batch_size'])
-    first_ranks = [sorted(range(len(score)), key=lambda i: score[i], reverse=True) for score in scores]
+    scores = blender.rank(instructions, ensemble_candidates, return_scores=True, batch_size=ranker_config['ranker_batch_size'])
+    ranks = [sorted(range(len(score)), key=lambda i: score[i], reverse=True) for score in scores]
         
-    assert len(first_ranks) == len(first_turn_candidates)
-    first_turn_top_candidate_texts_from_ranker = [first_turn_candidates[i][first_ranks[i][0]] for i in range(len(first_ranks))]
-
-    #################################################
-
-    # Score second turn candidates
-    assert len(second_turn_instructions) == len(second_turn_candidates)
-    print("Performing Ensemble Candidate Ranking for Second Turn Candidates with PairRM Ranker...")
-    scores = blender.rank(second_turn_instructions, second_turn_candidates, return_scores=True, batch_size=ranker_config['ranker_batch_size'])
-    second_ranks = [sorted(range(len(score)), key=lambda i: score[i], reverse=True) for score in scores]
-
-    assert len(second_ranks) == len(second_turn_candidates)
-    second_turn_top_candidate_texts_from_ranker = [second_turn_candidates[i][second_ranks[i][0]] for i in range(len(second_ranks))]
+    assert len(ranks) == len(ensemble_candidates)
+    top_candidate_texts_from_ranker = [ensemble_candidates[i][ranks[i][0]] for i in range(len(ranks))]
 
     #################################################
 
     # Create new ensemble JSONL
 
     ensemble_choices = []
-    for idx in range(len(first_turn_top_candidate_texts_from_ranker)):
+    for idx in range(len(top_candidate_texts_from_ranker)):
         ensemble_choices.append([{
-            "turns": [first_turn_top_candidate_texts_from_ranker[idx], second_turn_top_candidate_texts_from_ranker[idx]]
+            "turns": {"idx": 0,
+                      "content": top_candidate_texts_from_ranker[idx]}
         }])
 
     question_ids = dataset["question_id"].tolist()
-    answer_ids = dataset["answer_id"].tolist()
-    model_ids = ["ensemble"] * len(question_ids)
-    choices = ensemble_choices
-    turn_instructions = [""] * len(question_ids)
+    category_ids = dataset["category"].tolist()
+    cluster_ids = dataset["cluster"].tolist()
 
     os.makedirs(os.path.dirname(final_dataset_path), exist_ok=True)
     with open(os.path.expanduser(final_dataset_path), "a") as fout:
-        for question_id, answer_id, model_id, choices, turn_instruction in zip(question_ids, answer_ids, model_ids, choices, turn_instructions):
+        for question_id, category_id, model_id, cluster_id, choices in zip(question_ids, category_ids, cluster_ids, ensemble_choices):
             ans_json = {
                 "question_id": question_id,
-                "answer_id": answer_id,
+                "category": category_id,
                 "model_id": model_id,
+                "cluster_id": cluster_id,
                 "choices": choices,
-                "tstamp": time.time(),
-                "turn_instruction": turn_instruction,
             }
             fout.write(json.dumps(ans_json) + "\n")
 
     #################################################
 
-    judgement_command = f"python gen_judgment.py --model-list {ensemble_model_id} --parallel 2 --judge-model gpt-4"
-    print("Generating judgements...")
-    judgement_result = subprocess.run(judgement_command, shell=True, capture_output=True, text=True)
-    #breakpoint()
-    #with subprocess.Popen(judgement_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
-    #    for line in process.stdout:
-    #        print(line, end='')  # Print the output in real-time
-
-    print("------------------------------------------------")
-    print(f"Judgement Results for {ensemble_model_id}:")
-    for line in judgement_result.stdout.split("\n"):
-        print(line)
-    print("------------------------------------------------")
-
-    ##########################################
-
-    show_results_command = f"python show_result.py --model-list {ensemble_model_id}"
-    print("Showing results...")
-    show_results_result = subprocess.run(show_results_command, shell=True, capture_output=True, text=True)
-
-    print("------------------------------------------------")
-    print(f"MTBench Results for {ensemble_model_id}:")
-    for line in show_results_result.stdout.split("\n"):
-        print(line)
-    print("------------------------------------------------")
+    print("Ensemble Results Saved: ", final_dataset_path)
+    print(" - Add the model to the config files: api_config.yaml, gen_answer_config.yaml, judge_config.yaml")
+    print(" - Run the following commands to generate judgements and show results:")
+    print("python gen_judgment.py")
+    print("python show_result.py")
