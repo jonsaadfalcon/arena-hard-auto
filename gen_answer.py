@@ -82,7 +82,7 @@ def get_answer(
                                                 max_tokens=max_tokens)
             elif api_type == "together_ai":
                 output = chat_completion_together_ai(model=endpoint_info["model_name"],
-                                                     models=endpoint_info["models"],
+                                                     #models=endpoint_info["models"],
                                                      candidate_count=endpoint_info["candidate_count"],
                                                      messages=conv,
                                                      temperature=endpoint_info["temperature"],

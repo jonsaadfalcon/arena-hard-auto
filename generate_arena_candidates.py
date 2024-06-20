@@ -50,9 +50,8 @@ MoA_models = models
 generation_dict = {
     "batch_size": 8,
     "temperatures": [0.7], #0.9 #1.5
-    "candidates_per_temp": [1],
+    "candidates_per_temp": [10],
     "generation_max_length": 512,
-    "dataset_cutoff": 4, #3, None
     #"top_k": 10,
     #"top_p": 0.9
 }
@@ -60,7 +59,7 @@ generation_dict = {
 #################################################
 
 # Ensembling Parameters
-perform_ensembling = True
+perform_ensembling = False
 ranker_config = {
     "ranker_checkpoint": "llm-blender/PairRM",
 

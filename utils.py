@@ -321,28 +321,27 @@ def chat_completion_cohere(model, messages, temperature, max_tokens):
     
     return output
 
-def chat_completion_together_ai(model, models, candidate_count, messages, temperature, max_tokens):
+def chat_completion_together_ai(model, candidate_count, messages, temperature, max_tokens):
 
     client = Together(api_key=os.environ.get("TOGETHER_API_KEY"))
     assert len(messages) > 0
     
-    if len(models) == 1:
-        output = API_ERROR_OUTPUT
-        for _ in range(API_MAX_RETRY):
-            try:
-                response = client.chat.completions.create(
-                    model=model,
-                    messages=messages,
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                )
-                output = response.choices[0].message.content
-                break
-            except Exception as e:
-                print(type(e), e)
-                break
+    output = API_ERROR_OUTPUT
+    for _ in range(API_MAX_RETRY):
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
+            output = response.choices[0].message.content
+            break
+        except Exception as e:
+            print(type(e), e)
+            break
         
-        return output
+    return output
 
 def chat_completion_together_ai_v2(model, models, candidate_count, messages, temperature, max_tokens):
 
