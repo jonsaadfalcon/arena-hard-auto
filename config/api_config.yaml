@@ -79,3 +79,93 @@ databricks/dbrx-instruct:
     endpoints: null
     api_type: together_ai
     parallel: 1
+
+Qwen/Qwen1.5-7B-Chat:
+    model_name: "Qwen/Qwen1.5-7B-Chat"
+    models: ["Qwen/Qwen1.5-7B-Chat"]
+    candidate_count: 1
+    temperature: 0.7
+    endpoints: null
+    api_type: huggingface
+    parallel: 1
+
+Nexusflow/Starling-LM-7B-beta:
+    model_name: "Nexusflow/Starling-LM-7B-beta"
+    models: ["Nexusflow/Starling-LM-7B-beta"]
+    candidate_count: 1
+    temperature: 0.7
+    endpoints: null
+    api_type: huggingface
+    parallel: 1
+
+meta-llama/Meta-Llama-3-8B-Instruct:
+    model_name: "meta-llama/Meta-Llama-3-8B-Instruct"
+    models: ["meta-llama/Meta-Llama-3-8B-Instruct"]
+    candidate_count: 1
+    temperature: 0.7
+    endpoints: null
+    api_type: huggingface
+    parallel: 1
+
+berkeley-nest/Starling-LM-7B-alpha:
+    model_name: "berkeley-nest/Starling-LM-7B-alpha"
+    models: ["berkeley-nest/Starling-LM-7B-alpha"]
+    candidate_count: 1
+    temperature: 0.7
+    endpoints: null
+    api_type: huggingface
+    parallel: 1
+
+teknium/OpenHermes-2.5-Mistral-7B:
+    model_name: "teknium/OpenHermes-2.5-Mistral-7B"
+    models: ["teknium/OpenHermes-2.5-Mistral-7B"]
+    candidate_count: 1
+    temperature: 0.7
+    endpoints: null
+    api_type: huggingface
+    parallel: 1
+
+mistralai/Mistral-7B-Instruct-v0.2:
+    model_name: "mistralai/Mistral-7B-Instruct-v0.2"
+    models: ["mistralai/Mistral-7B-Instruct-v0.2"]
+    candidate_count: 1
+    temperature: 0.7
+    endpoints: null
+    api_type: huggingface
+    parallel: 1
+
+cognitivecomputations/dolphin-2.2.1-mistral-7b:
+    model_name: "cognitivecomputations/dolphin-2.2.1-mistral-7b"
+    models: ["cognitivecomputations/dolphin-2.2.1-mistral-7b"]
+    candidate_count: 1
+    temperature: 0.7
+    endpoints: null
+    api_type: huggingface
+    parallel: 1
+
+microsoft/Phi-3-mini-4k-instruct:
+    model_name: "microsoft/Phi-3-mini-4k-instruct"
+    models: ["microsoft/Phi-3-mini-4k-instruct"]
+    candidate_count: 1
+    temperature: 0.7
+    endpoints: null
+    api_type: huggingface
+    parallel: 1
+
+HuggingFaceH4/zephyr-7b-beta:
+    model_name: "HuggingFaceH4/zephyr-7b-beta"
+    models: ["HuggingFaceH4/zephyr-7b-beta"]
+    candidate_count: 1
+    temperature: 0.7
+    endpoints: null
+    api_type: huggingface
+    parallel: 1
+
+microsoft/Phi-3-small-8k-instruct:
+    model_name: "microsoft/Phi-3-small-8k-instruct"
+    models: ["microsoft/Phi-3-small-8k-instruct"]
+    candidate_count: 1
+    temperature: 0.7
+    endpoints: null
+    api_type: huggingface
+    parallel: 1

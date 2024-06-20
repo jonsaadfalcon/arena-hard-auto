@@ -321,6 +321,28 @@ def chat_completion_cohere(model, messages, temperature, max_tokens):
     
     return output
 
+##################################################
+
+def chat_completion_huggingface(messages, pipeline, generation_config):
+
+    prompt = pipeline.tokenizer.apply_chat_template(
+            messages, 
+            tokenize=False, 
+            add_generation_prompt=True
+    )
+    prompt_length = len(prompt)
+
+    outputs = pipeline(
+        prompt,
+        batch_size=generation_config.batch_size,
+        generation_config=generation_config
+    )
+
+    answer = outputs[0]["generated_text"][prompt_length:]
+    return answer                                   
+
+##################################################
+
 def chat_completion_together_ai(model, candidate_count, messages, temperature, max_tokens):
 
     client = Together(api_key=os.environ.get("TOGETHER_API_KEY"))
@@ -377,7 +399,8 @@ def chat_completion_together_ai_v2(model, models, candidate_count, messages, tem
     print("Prompt:", messages)
     print("Output:", random_sampled_output)
     return random_sampled_output, model_to_outputs_dict
-        
+
+##################################################
 
 def reorg_answer_file(answer_file):
     """Sort by question id and de-duplication"""

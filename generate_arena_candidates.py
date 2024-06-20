@@ -35,28 +35,19 @@ from datasets import Dataset, concatenate_datasets
 
 # Parameters
 
-# Mixture of Agents Models
-models = ["Qwen/Qwen1.5-72B-Chat", "Qwen/Qwen1.5-110B-Chat", "microsoft/WizardLM-2-8x22B",
-          "mistralai/Mixtral-8x22B-Instruct-v0.1", "meta-llama/Llama-3-70b-chat-hf", "databricks/dbrx-instruct"]
-MoA_models = models
-
 # Set the models and their configs in:
 # - api_config.yaml
 # - gen_answer_config.yaml
 # - judge_config.yaml 
 
-
-# Generation Settings
-generation_dict = {
-    "batch_size": 8,
-    "temperatures": [0.7], #0.9 #1.5
-    "candidates_per_temp": [10],
-    "generation_max_length": 512,
-    #"top_k": 10,
-    #"top_p": 0.9
-}
-
 #################################################
+
+# Ensembling Model Selection
+
+# Mixture of Agents Models
+models = ["Qwen/Qwen1.5-72B-Chat", "Qwen/Qwen1.5-110B-Chat", "microsoft/WizardLM-2-8x22B",
+          "mistralai/Mixtral-8x22B-Instruct-v0.1", "meta-llama/Llama-3-70b-chat-hf", "databricks/dbrx-instruct"]
+MoA_models = models
 
 # Ensembling Parameters
 perform_ensembling = False
@@ -74,27 +65,21 @@ ranker_config = {
 # Check if dataset already exists
 ensemble_model_id = "ensemble_v2"
 final_dataset_path = f"data/arena-hard-v0.1/model_answer/{ensemble_model_id}.jsonl"
+if os.path.exists(final_dataset_path):
+    print("Ensemble Dataset Already Exists: ", final_dataset_path)
+    sys.exit()
 
 #################################################
 
 if not perform_ensembling:
     
-    print(f"Generating candidates for models: {models}")
-    
-    model_name = models[0]
-    model_id = model_name.split("/")[1]
-    saved_jsonl_path = f"data/arena-hard-v0.1/model_answer/{model_name}.jsonl"
-    if not os.path.exists(saved_jsonl_path):
-        candidate_generation_command = "python gen_answer.py"
+    candidate_generation_command = "python gen_answer.py"
 
-        print("Generation Command: ", candidate_generation_command)
-        print("Generating candidates...")
-        with subprocess.Popen(candidate_generation_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
-            for line in process.stdout:
-                print(line, end='')  # Print the output in real-time
-
-    else:
-        print(f"Model {model_name} already has candidates generated. Already saved to: {saved_jsonl_path}")
+    print("Generation Command: ", candidate_generation_command)
+    print("Generating candidates...")
+    with subprocess.Popen(candidate_generation_command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True) as process:
+        for line in process.stdout:
+            print(line, end='')  # Print the output in real-time
 
     ##########################################
 
@@ -111,7 +96,7 @@ if not perform_ensembling:
     show_results_result = subprocess.run(show_results_command, shell=True, capture_output=True, text=True)
 
     print("------------------------------------------------")
-    print(f"Arena-Hard-Auto Results for {model_name}:")
+    print("Arena-Hard-Auto Results:")
     for line in show_results_result.stdout.split("\n"):
         print(line)
     print("------------------------------------------------")

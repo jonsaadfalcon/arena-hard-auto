@@ -25,10 +25,81 @@ from utils import (
     http_completion_gemini,
     chat_completion_cohere,
     chat_completion_together_ai,
+    chat_completion_huggingface,
     reorg_answer_file,
     OPENAI_MODEL_LIST,
     temperature_config,
 )
+
+import transformers
+from transformers import AutoTokenizer, GenerationConfig
+import torch
+
+##################################################
+
+def load_HF_pipeline(model_path: str, max_new_tokens: int):
+
+        model_id = model_path
+        model = model_path
+    
+        if model == "microsoft/Phi-3-small-8k-instruct":
+            pipeline = transformers.pipeline(
+                "text-generation",
+                model=model_id,
+                tokenizer=AutoTokenizer.from_pretrained(model_id, trust_remote_code=True),
+                model_kwargs={"torch_dtype": torch.bfloat16},
+                device_map="auto",
+                trust_remote_code=True
+            )
+        else:
+            pipeline = transformers.pipeline(
+                "text-generation",
+                model=model_id,
+                #model_kwargs={"torch_dtype": torch.bfloat16} if model == "meta-llama/Meta-Llama-3-8B-Instruct" else {"torch_dtype": "auto"},
+                #model_kwargs={"torch_dtype": "auto"},
+                model_kwargs={"torch_dtype": torch.bfloat16},
+                device_map="auto",
+                trust_remote_code=True
+            )
+
+        pipeline.model.config.pad_token_id = pipeline.tokenizer.eos_token_id
+        pipeline.tokenizer.pad_token_id = pipeline.tokenizer.eos_token_id
+        if model == "meta-llama/Meta-Llama-3-8B-Instruct":
+            pipeline.tokenizer.padding_side = 'left'
+
+        pipeline.model.config.is_encoder_decoder = False
+
+        ########################################
+
+        terminators = [
+                pipeline.tokenizer.eos_token_id,
+                pipeline.tokenizer.convert_tokens_to_ids("<|eot_id|>")
+        ]
+
+        ########################################
+
+        generation_config, unused_kwargs = GenerationConfig.from_pretrained(
+            model_id, 
+            return_unused_kwargs=True
+        )
+
+        generation_config.batch_size = 1
+        
+        generation_config.max_new_tokens = max_new_tokens
+        generation_config.do_sample = True
+        #generation_config.temperature = temperature
+        generation_config.top_p = 0.9
+        generation_config.num_return_sequences = 1
+        generation_config.is_encoder_decoder = False
+        generation_config.eos_token_id = terminators if model in ["meta-llama/Meta-Llama-3-8B-Instruct"] else pipeline.tokenizer.eos_token_id
+        if model in ["meta-llama/Meta-Llama-3-8B-Instruct", "upstage/SOLAR-10.7B-Instruct-v1.0", "meta-llama/Llama-2-7b-chat-hf"]:
+            generation_config.pretraining_tp = 1
+        
+        pipeline.model.config = generation_config
+
+        return pipeline, generation_config
+
+##################################################
 
 
 def get_answer(
@@ -45,6 +116,13 @@ def get_answer(
         conv.append({"role": "system", "content": endpoint_info["system_prompt"]})
     elif model in OPENAI_MODEL_LIST:
         conv.append({"role": "system", "content": "You are a helpful assistant."})
+
+    ################################################
+
+    if api_type == "huggingface": 
+        pipeline, generation_config = load_HF_pipeline(endpoint_info["model_name"], max_tokens) 
+
+    ################################################
 
     encoding = tiktoken.encoding_for_model("gpt-3.5-turbo")
     choices = []
@@ -87,6 +165,15 @@ def get_answer(
                                                      messages=conv,
                                                      temperature=endpoint_info["temperature"],
                                                      max_tokens=max_tokens)
+            elif api_type == "huggingface":
+
+                generation_config.temperature = temperature if temperature != 0.0 else 0.7
+                breakpoint()
+                output = chat_completion_huggingface(messages=conv,
+                                                     pipeline=pipeline, 
+                                                     generation_config=generation_config,)
+                breakpoint()
+                
             else:
                 output = chat_completion_openai(model=endpoint_info["model_name"], 
                                                 messages=conv, 
