@@ -10,9 +10,7 @@ num_choices: 10
 model_list:
   #- gpt-3.5-turbo-0125
 
-  #"Qwen/Qwen1.5-72B-Chat", "Qwen/Qwen1.5-110B-Chat", "microsoft/WizardLM-2-8x22B", "mistralai/Mixtral-8x22B-Instruct-v0.1", "meta-llama/Llama-3-70b-chat-hf", "databricks/dbrx-instruct"
-  #- Qwen/Qwen1.5-72B-Chat
-  #- Qwen/Qwen1.5-110B-Chat
+  #- Qwen/Qwen2-72B-Instruct
   #- microsoft/WizardLM-2-8x22B
   #- mistralai/Mixtral-8x22B-Instruct-v0.1
   #- meta-llama/Llama-3-70b-chat-hf

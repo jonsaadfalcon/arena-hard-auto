@@ -45,9 +45,13 @@ from datasets import Dataset, concatenate_datasets
 # Ensembling Model Selection
 
 # Mixture of Agents Models
-models = ["Qwen/Qwen1.5-72B-Chat", "Qwen/Qwen1.5-110B-Chat", "microsoft/WizardLM-2-8x22B",
-          "mistralai/Mixtral-8x22B-Instruct-v0.1", "meta-llama/Llama-3-70b-chat-hf", "databricks/dbrx-instruct"]
-MoA_models = models
+#models = ["Qwen/Qwen1.5-72B-Chat", "Qwen/Qwen1.5-110B-Chat", "microsoft/WizardLM-2-8x22B",
+#          "mistralai/Mixtral-8x22B-Instruct-v0.1", "meta-llama/Llama-3-70b-chat-hf", "databricks/dbrx-instruct"]
+
+models = ["Qwen/Qwen1.5-7B-Chat","meta-llama/Meta-Llama-3-8B-Instruct", "Nexusflow/Starling-LM-7B-beta", 
+          "berkeley-nest/Starling-LM-7B-alpha", "teknium/OpenHermes-2.5-Mistral-7B", "mistralai/Mistral-7B-Instruct-v0.2",
+          "cognitivecomputations/dolphin-2.2.1-mistral-7b", "microsoft/Phi-3-mini-4k-instruct", #"upstage/SOLAR-10.7B-Instruct-v1.0",
+          "HuggingFaceH4/zephyr-7b-beta", "microsoft/Phi-3-small-8k-instruct"]
 
 # Ensembling Parameters
 perform_ensembling = False

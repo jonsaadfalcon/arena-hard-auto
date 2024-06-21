@@ -101,10 +101,26 @@ def load_HF_pipeline(model_path: str, max_new_tokens: int):
 
 ##################################################
 
+def search_string_in_jsonl(file_path, search_string):
+    found = False
+    with open(file_path, 'r', encoding='utf-8') as file:
+        for line in file:
+            if search_string in line:
+                found = True
+                break
+                #print(f"Found the string in line: {line.strip()}")
+    #if not found:
+     #   print(f"The string '{search_string}' was not found in the file.")
+    return found
 
 def get_answer(
-    question: dict, model: str, endpoint_info: dict, num_choices: int, max_tokens: int, temperature: float, answer_file: str, api_dict: dict
+    question: dict, model: str, endpoint_info: dict, num_choices: int, max_tokens: int, temperature: float, answer_file: str, api_dict: dict, 
+    pipeline=None, generation_config=None
 ):
+    
+    if os.path.exists(answer_file) and search_string_in_jsonl(answer_file, question["question_id"]):
+        return
+    
     if question["category"] in temperature_config:
         temperature = temperature_config[question["category"]]
 
@@ -116,11 +132,6 @@ def get_answer(
         conv.append({"role": "system", "content": endpoint_info["system_prompt"]})
     elif model in OPENAI_MODEL_LIST:
         conv.append({"role": "system", "content": "You are a helpful assistant."})
-
-    ################################################
-
-    if api_type == "huggingface": 
-        pipeline, generation_config = load_HF_pipeline(endpoint_info["model_name"], max_tokens) 
 
     ################################################
 
@@ -168,11 +179,9 @@ def get_answer(
             elif api_type == "huggingface":
 
                 generation_config.temperature = temperature if temperature != 0.0 else 0.7
-                breakpoint()
                 output = chat_completion_huggingface(messages=conv,
                                                      pipeline=pipeline, 
                                                      generation_config=generation_config,)
-                breakpoint()
                 
             else:
                 output = chat_completion_openai(model=endpoint_info["model_name"], 
@@ -227,7 +236,11 @@ if __name__ == "__main__":
         question_file = os.path.join("data", settings["bench_name"], "question.jsonl")
         questions = load_questions(question_file)
 
-        answer_file = os.path.join("data", settings["bench_name"], "model_answer", f"{model}.jsonl")
+        if len(model.split("/")) >= 2:
+            model_name = model.split("/")[1]
+            answer_file = os.path.join("data", settings["bench_name"], "model_answer", f"{model_name}.jsonl")
+        else:
+            answer_file = os.path.join("data", settings["bench_name"], "model_answer", f"{model}.jsonl")
         print(f"Output to {answer_file}")
 
         if "parallel" in endpoint_info:
@@ -253,6 +266,16 @@ if __name__ == "__main__":
         else:
             max_tokens = [settings["max_tokens"]] * len(questions)
 
+        ################################################
+
+        if endpoint_info["api_type"] == "huggingface": 
+            print(f"Max Tokens: {max_tokens[0]}")
+            pipeline, generation_config = load_HF_pipeline(endpoint_info["model_name"], max_tokens[0]) 
+        else:
+            pipeline, generation_config = None, None
+
+        ################################################
+
         with concurrent.futures.ThreadPoolExecutor(max_workers=parallel) as executor:
             futures = []
             count = 0
@@ -270,6 +293,8 @@ if __name__ == "__main__":
                     settings["temperature"],
                     answer_file,
                     get_endpoint(endpoint_info["endpoints"]),
+                    pipeline=pipeline,
+                    generation_config=generation_config
                 )
                 futures.append(future)
             if count > 0:

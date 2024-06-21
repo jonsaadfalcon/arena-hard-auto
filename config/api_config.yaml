@@ -44,6 +44,15 @@ Qwen/Qwen1.5-110B-Chat:
     api_type: together_ai
     parallel: 1
 
+Qwen/Qwen2-72B-Instruct:
+    model_name: "Qwen/Qwen2-72B-Instruct"
+    models: ["Qwen/Qwen2-72B-Instruct"]
+    candidate_count: 1
+    temperature: 0.7
+    endpoints: null
+    api_type: together_ai
+    parallel: 1
+
 microsoft/WizardLM-2-8x22B:
     model_name: "microsoft/WizardLM-2-8x22B"
     models: ["microsoft/WizardLM-2-8x22B"]
