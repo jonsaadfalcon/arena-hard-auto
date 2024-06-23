@@ -26,6 +26,7 @@ from utils import (
     chat_completion_cohere,
     chat_completion_together_ai,
     chat_completion_huggingface,
+    generate_MoA_response,
     reorg_answer_file,
     OPENAI_MODEL_LIST,
     temperature_config,
@@ -64,7 +65,8 @@ def load_HF_pipeline(model_path: str, max_new_tokens: int):
 
         pipeline.model.config.pad_token_id = pipeline.tokenizer.eos_token_id
         pipeline.tokenizer.pad_token_id = pipeline.tokenizer.eos_token_id
-        if model == "meta-llama/Meta-Llama-3-8B-Instruct":
+        if model in ["meta-llama/Meta-Llama-3-8B-Instruct", "princeton-nlp/Llama-3-Instruct-8B-SimPO", "princeton-nlp/Llama-3-Instruct-8B-IPO", 
+                     "princeton-nlp/Llama-3-Instruct-8B-RDPO", "princeton-nlp/Llama-3-Instruct-8B-DPO"]:
             pipeline.tokenizer.padding_side = 'left'
 
         pipeline.model.config.is_encoder_decoder = False
@@ -92,7 +94,8 @@ def load_HF_pipeline(model_path: str, max_new_tokens: int):
         generation_config.num_return_sequences = 1
         generation_config.is_encoder_decoder = False
         generation_config.eos_token_id = terminators if model in ["meta-llama/Meta-Llama-3-8B-Instruct"] else pipeline.tokenizer.eos_token_id
-        if model in ["meta-llama/Meta-Llama-3-8B-Instruct", "upstage/SOLAR-10.7B-Instruct-v1.0", "meta-llama/Llama-2-7b-chat-hf"]:
+        if model in ["meta-llama/Meta-Llama-3-8B-Instruct", "princeton-nlp/Llama-3-Instruct-8B-SimPO", "princeton-nlp/Llama-3-Instruct-8B-IPO", 
+                     "princeton-nlp/Llama-3-Instruct-8B-RDPO", "princeton-nlp/Llama-3-Instruct-8B-DPO"]:
             generation_config.pretraining_tp = 1
         
         pipeline.model.config = generation_config
@@ -102,6 +105,9 @@ def load_HF_pipeline(model_path: str, max_new_tokens: int):
 ##################################################
 
 def search_string_in_jsonl(file_path, search_string):
+    if not os.path.exists(file_path):
+        return False
+    
     found = False
     with open(file_path, 'r', encoding='utf-8') as file:
         for line in file:
@@ -118,7 +124,7 @@ def get_answer(
     pipeline=None, generation_config=None
 ):
     
-    if os.path.exists(answer_file) and search_string_in_jsonl(answer_file, question["question_id"]):
+    if search_string_in_jsonl(answer_file, question["question_id"]):
         return
     
     if question["category"] in temperature_config:
@@ -181,7 +187,21 @@ def get_answer(
                 generation_config.temperature = temperature if temperature != 0.0 else 0.7
                 output = chat_completion_huggingface(messages=conv,
                                                      pipeline=pipeline, 
-                                                     generation_config=generation_config,)
+                                                     generation_config=generation_config)
+                
+
+            elif api_type == "MoA":
+
+                output = generate_MoA_response(aggregator_model=endpoint_info["aggregator_model"],
+                                               reference_models=endpoint_info["reference_models"],
+                                               rounds=endpoint_info["rounds"],
+                                               messages=conv,
+                                               temperature=temperature,
+                                               max_tokens=max_tokens)
+                                               #generate_fn=generate_together)
+
+                #print(f"Instruction: {question['turns'][j]['content']}")
+                #print(f"Output: {output}")
                 
             else:
                 output = chat_completion_openai(model=endpoint_info["model_name"], 
