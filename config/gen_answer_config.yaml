@@ -31,14 +31,14 @@ model_list:
   #- microsoft/Phi-3-small-8k-instruct
 
   #- Qwen/Qwen2-7B-Instruct
-  - princeton-nlp/Llama-3-Instruct-8B-SimPO
-  - princeton-nlp/Llama-3-Instruct-8B-IPO
-  - princeton-nlp/Llama-3-Instruct-8B-RDPO
-  - princeton-nlp/Llama-3-Instruct-8B-DPO
+  #- princeton-nlp/Llama-3-Instruct-8B-SimPO
+  #- princeton-nlp/Llama-3-Instruct-8B-IPO
+  #- princeton-nlp/Llama-3-Instruct-8B-RDPO
+  #- princeton-nlp/Llama-3-Instruct-8B-DPO
 
   #- MoA_Ensemble_Three_Rounds
   #- MoA_Ensemble_One_Round
-  #- MoA_Ensemble_Three_Round_with_Wizard_5x_and_Qwen_1.5_110B_Aggregator
+  - MoA_Ensemble_Three_Round_with_Wizard_5x_and_Qwen_1.5_110B_Aggregator
   #- MoA_Ensemble_Three_Round_with_Qwen_1.5_110B_5x_and_Qwen_1.5_110B_Aggregator
 
 
