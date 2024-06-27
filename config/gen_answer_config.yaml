@@ -2,8 +2,8 @@ name: config of answer generation for arena-hard-v0.1
 
 bench_name: arena-hard-v0.1
 
-temperature: 0.0
-max_tokens: 2048 #4096
+temperature: 0.7
+max_tokens: 4096 #4096
 num_choices: 10
 
 # a list of model to generate answers
@@ -11,6 +11,9 @@ model_list:
   #- gpt-3.5-turbo-0125
 
   #- Qwen/Qwen2-72B-Instruct
+
+  - Qwen/Qwen1.5-72B-Chat
+  - Qwen/Qwen1.5-110B-Chat
   #- microsoft/WizardLM-2-8x22B
   #- mistralai/Mixtral-8x22B-Instruct-v0.1
   #- meta-llama/Llama-3-70b-chat-hf
@@ -20,9 +23,9 @@ model_list:
   #- Nexusflow/Starling-LM-7B-beta
   #- meta-llama/Meta-Llama-3-8B-Instruct
   #- berkeley-nest/Starling-LM-7B-alpha
-  - teknium/OpenHermes-2.5-Mistral-7B
-  - mistralai/Mistral-7B-Instruct-v0.2
-  - cognitivecomputations/dolphin-2.2.1-mistral-7b
+  #- teknium/OpenHermes-2.5-Mistral-7B
+  #- mistralai/Mistral-7B-Instruct-v0.2
+  #- cognitivecomputations/dolphin-2.2.1-mistral-7b
   #- microsoft/Phi-3-mini-4k-instruct
   #- HuggingFaceH4/zephyr-7b-beta
   #- microsoft/Phi-3-small-8k-instruct
@@ -35,6 +38,8 @@ model_list:
 
   #- MoA_Ensemble_Three_Rounds
   #- MoA_Ensemble_One_Round
+  #- MoA_Ensemble_Three_Round_with_Wizard_5x_and_Qwen_1.5_110B_Aggregator
+  #- MoA_Ensemble_Three_Round_with_Qwen_1.5_110B_5x_and_Qwen_1.5_110B_Aggregator
 
 
   

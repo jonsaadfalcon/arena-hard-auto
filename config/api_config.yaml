@@ -246,3 +246,23 @@ MoA_Ensemble_One_Round:
     endpoints: null
     api_type: MoA
     parallel: 1
+
+MoA_Ensemble_Three_Round_with_Wizard_5x_and_Qwen_1.5_110B_Aggregator:
+    aggregator_model: "Qwen/Qwen1.5-110B-Chat"
+    reference_models: ["microsoft/WizardLM-2-8x22B", "microsoft/WizardLM-2-8x22B", "microsoft/WizardLM-2-8x22B", "microsoft/WizardLM-2-8x22B", "microsoft/WizardLM-2-8x22B", "microsoft/WizardLM-2-8x22B"]
+    rounds: 3
+    candidate_count: 1
+    temperature: 0.7
+    endpoints: null
+    api_type: MoA
+    parallel: 1
+
+MoA_Ensemble_Three_Round_with_Qwen_1.5_110B_5x_and_Qwen_1.5_110B_Aggregator:
+    aggregator_model: "Qwen/Qwen1.5-110B-Chat"
+    reference_models: ["Qwen/Qwen1.5-110B-Chat", "Qwen/Qwen1.5-110B-Chat", "Qwen/Qwen1.5-110B-Chat", "Qwen/Qwen1.5-110B-Chat", "Qwen/Qwen1.5-110B-Chat", "Qwen/Qwen1.5-110B-Chat"]
+    rounds: 3
+    candidate_count: 1
+    temperature: 0.7
+    endpoints: null
+    api_type: MoA
+    parallel: 1
