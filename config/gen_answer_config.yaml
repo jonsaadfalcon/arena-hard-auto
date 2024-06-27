@@ -12,8 +12,8 @@ model_list:
 
   #- Qwen/Qwen2-72B-Instruct
 
-  - Qwen/Qwen1.5-72B-Chat
-  - Qwen/Qwen1.5-110B-Chat
+  #- Qwen/Qwen1.5-72B-Chat
+  #- Qwen/Qwen1.5-110B-Chat
   #- microsoft/WizardLM-2-8x22B
   #- mistralai/Mixtral-8x22B-Instruct-v0.1
   #- meta-llama/Llama-3-70b-chat-hf
@@ -31,10 +31,10 @@ model_list:
   #- microsoft/Phi-3-small-8k-instruct
 
   #- Qwen/Qwen2-7B-Instruct
-  #- princeton-nlp/Llama-3-Instruct-8B-SimPO
-  #- princeton-nlp/Llama-3-Instruct-8B-IPO
-  #- princeton-nlp/Llama-3-Instruct-8B-RDPO
-  #- princeton-nlp/Llama-3-Instruct-8B-DPO
+  - princeton-nlp/Llama-3-Instruct-8B-SimPO
+  - princeton-nlp/Llama-3-Instruct-8B-IPO
+  - princeton-nlp/Llama-3-Instruct-8B-RDPO
+  - princeton-nlp/Llama-3-Instruct-8B-DPO
 
   #- MoA_Ensemble_Three_Rounds
   #- MoA_Ensemble_One_Round
