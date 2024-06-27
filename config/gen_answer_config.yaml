@@ -38,8 +38,8 @@ model_list:
 
   #- MoA_Ensemble_Three_Rounds
   #- MoA_Ensemble_One_Round
-  - MoA_Ensemble_Three_Round_with_Wizard_5x_and_Qwen_1.5_110B_Aggregator
-  #- MoA_Ensemble_Three_Round_with_Qwen_1.5_110B_5x_and_Qwen_1.5_110B_Aggregator
+  #- MoA_Ensemble_Three_Round_with_Wizard_5x_and_Qwen_1.5_110B_Aggregator
+  - MoA_Ensemble_Three_Round_with_Qwen_1.5_110B_5x_and_Qwen_1.5_110B_Aggregator
 
 
   
